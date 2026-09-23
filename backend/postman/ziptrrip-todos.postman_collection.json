@@ -1,0 +1,202 @@
+{
+  "info": {
+    "_postman_id": "ziptrrip-todos-api-v1",
+    "name": "Ziptrrip Todos API",
+    "description": "Complete REST API collection for the Ziptrrip Todo assignment backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/todos",
+      "type": "string"
+    },
+    {
+      "key": "todoId",
+      "value": "",
+      "type": "string",
+      "description": "Set this to the UUID of a created todo"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Todo",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Buy groceries\",\n  \"description\": \"Milk, eggs, bread\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2026-10-01T00:00:00.000Z\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+              "pm.test(\"Has success envelope\", () => { const body = pm.response.json(); pm.expect(body.success).to.be.true; pm.collectionVariables.set('todoId', body.data.id); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "List All Todos",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Data is array\", () => pm.expect(pm.response.json().data).to.be.an('array'));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Active Todos",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}?status=active",
+          "host": ["{{baseUrl}}"],
+          "query": [{ "key": "status", "value": "active" }]
+        }
+      }
+    },
+    {
+      "name": "List Completed Todos",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}?status=completed",
+          "host": ["{{baseUrl}}"],
+          "query": [{ "key": "status", "value": "completed" }]
+        }
+      }
+    },
+    {
+      "name": "Get Todo by ID",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/{{todoId}}", "host": ["{{baseUrl}}/{{todoId}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Data has id\", () => pm.expect(pm.response.json().data.id).to.exist);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Todo (Partial)",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"completed\": true,\n  \"title\": \"Buy groceries - DONE\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/{{todoId}}", "host": ["{{baseUrl}}/{{todoId}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Completed is true\", () => pm.expect(pm.response.json().data.completed).to.be.true);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Todo",
+      "request": {
+        "method": "DELETE",
+        "url": { "raw": "{{baseUrl}}/{{todoId}}", "host": ["{{baseUrl}}/{{todoId}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 204\", () => pm.response.to.have.status(204));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[Error] Create without title (400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"description\": \"No title\"\n}" },
+        "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": ["pm.test(\"Status is 400\", () => pm.response.to.have.status(400));"],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[Error] Get with bad UUID (400)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/not-a-uuid", "host": ["{{baseUrl}}/not-a-uuid"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": ["pm.test(\"Status is 400\", () => pm.response.to.have.status(400));"],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[Error] Get non-existent todo (404)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/00000000-0000-0000-0000-000000000000",
+          "host": ["{{baseUrl}}/00000000-0000-0000-0000-000000000000"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": ["pm.test(\"Status is 404\", () => pm.response.to.have.status(404));"],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}

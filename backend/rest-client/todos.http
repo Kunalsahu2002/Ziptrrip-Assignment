@@ -1,0 +1,101 @@
+### Ziptrrip Todo API — REST Client
+### Requires the REST Client extension for VS Code (humao.rest-client)
+### Make sure the backend server is running on port 3000
+
+@baseUrl = http://localhost:3000/api/todos
+
+###
+# Health Check
+GET http://localhost:3000/health
+Content-Type: application/json
+
+###
+# POST /api/todos — Create a new todo
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "title": "Buy groceries",
+  "description": "Milk, eggs, bread",
+  "priority": "HIGH",
+  "dueDate": "2026-10-01T00:00:00.000Z"
+}
+
+###
+# POST /api/todos — Create a minimal todo (only required field)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "title": "Write tests"
+}
+
+###
+# GET /api/todos — List all todos
+GET {{baseUrl}}
+Content-Type: application/json
+
+###
+# GET /api/todos?status=active — List active todos
+GET {{baseUrl}}?status=active
+Content-Type: application/json
+
+###
+# GET /api/todos?status=completed — List completed todos
+GET {{baseUrl}}?status=completed
+Content-Type: application/json
+
+###
+# GET /api/todos/:id — Get a single todo by ID
+# Replace <id> with an actual UUID from a created todo
+GET {{baseUrl}}/<id>
+Content-Type: application/json
+
+###
+# PATCH /api/todos/:id — Partial update (mark as completed)
+# Replace <id> with an actual UUID from a created todo
+PATCH {{baseUrl}}/<id>
+Content-Type: application/json
+
+{
+  "completed": true
+}
+
+###
+# PATCH /api/todos/:id — Full partial update
+# Replace <id> with an actual UUID from a created todo
+PATCH {{baseUrl}}/<id>
+Content-Type: application/json
+
+{
+  "title": "Updated title",
+  "description": "Updated description",
+  "priority": "LOW",
+  "completed": false,
+  "dueDate": "2026-11-01T00:00:00.000Z"
+}
+
+###
+# DELETE /api/todos/:id — Delete a todo
+# Replace <id> with an actual UUID from a created todo
+DELETE {{baseUrl}}/<id>
+Content-Type: application/json
+
+###
+# Error cases: Invalid UUID (expect 400)
+GET {{baseUrl}}/not-a-valid-uuid
+Content-Type: application/json
+
+###
+# Error cases: Missing title (expect 400)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "description": "No title provided"
+}
+
+###
+# Error cases: Non-existent todo (expect 404)
+GET {{baseUrl}}/00000000-0000-0000-0000-000000000000
+Content-Type: application/json

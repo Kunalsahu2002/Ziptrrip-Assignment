@@ -1,0 +1,25 @@
+﻿# Dependencies
+node_modules/
+
+# Environment secrets — never commit
+.env
+
+# Build output
+dist/
+
+# Logs
+*.log
+
+# Prisma generated client (regenerated via `prisma generate`)
+src/generated/
+
+# AI agent internal scaffolding
+.agents/
+.claude/
+.windsurf/
+
+# Prisma skills lock
+skills-lock.json
+
+
+skills-lock.json

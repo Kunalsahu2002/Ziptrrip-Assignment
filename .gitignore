@@ -1,0 +1,35 @@
+﻿# Dependencies
+node_modules/
+
+# Environment secrets — never commit
+.env
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# AI agent internal scaffolding — not part of the assignment
+.agents/
+.claude/
+.windsurf/
+backend/.agents/
+backend/.claude/
+backend/.windsurf/
+
+# Prisma generated client (regenerated via `prisma generate`)
+backend/src/generated/
+
+# Internal planning documents (agent scratch files)
+IMPLEMENTATION_PLAN.md
